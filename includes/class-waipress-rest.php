@@ -39,6 +39,16 @@ class WAIpress_REST {
 			'callback'            => array( 'WAIpress_AI', 'rest_suggest_tags' ),
 			'permission_callback' => array( __CLASS__, 'can_edit_posts' ),
 		) );
+		register_rest_route( self::NAMESPACE, '/ai/rewrite-meta', array(
+			'methods'             => 'POST',
+			'callback'            => array( 'WAIpress_Yoast', 'rest_rewrite_meta' ),
+			'permission_callback' => array( __CLASS__, 'can_edit_posts' ),
+		) );
+		register_rest_route( self::NAMESPACE, '/ai/products/generate', array(
+			'methods'             => 'POST',
+			'callback'            => array( 'WAIpress_WooCommerce', 'rest_generate' ),
+			'permission_callback' => array( __CLASS__, 'can_edit_posts' ),
+		) );
 
 		// AI Prompts CRUD
 		register_rest_route( self::NAMESPACE, '/ai/prompts', array(

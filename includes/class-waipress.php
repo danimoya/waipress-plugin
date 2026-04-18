@@ -65,6 +65,21 @@ class WAIpress {
 		if ( class_exists( 'WAIpress_Upsell' ) ) {
 			WAIpress_Upsell::init();
 		}
+
+		// Yoast / Rank Math meta rewrite (no-op if neither plugin is active).
+		if ( class_exists( 'WAIpress_Yoast' ) ) {
+			WAIpress_Yoast::init();
+		}
+
+		// WooCommerce product AI (no-op if WC is not active).
+		if ( class_exists( 'WAIpress_WooCommerce' ) ) {
+			WAIpress_WooCommerce::init();
+		}
+
+		// Bridge submissions from WPForms / Gravity / CF7 / Forminator → CRM.
+		if ( class_exists( 'WAIpress_Form_Bridge' ) ) {
+			WAIpress_Form_Bridge::init();
+		}
 	}
 
 	/**

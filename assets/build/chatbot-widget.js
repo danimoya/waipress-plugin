@@ -107,6 +107,43 @@
     messagesEl.scrollTop = messagesEl.scrollHeight;
   }
 
+  function renderCards(cards) {
+    if (!Array.isArray(cards)) return;
+    cards.forEach(card => {
+      if (!card || !card.type) return;
+      const el = document.createElement('div');
+      el.style.cssText = 'align-self:flex-start;border:1px solid #e2e4e7;background:#fff;border-radius:8px;padding:10px;max-width:85%;font-size:13px;line-height:1.4;';
+      if (card.type === 'product_card') {
+        const d = card.data || {};
+        el.innerHTML = '<div style="font-weight:600;font-size:14px;margin-bottom:4px;"></div>' +
+                       '<div style="color:#2271b1;margin-bottom:4px;"></div>' +
+                       '<div style="color:#50575e;"></div>' +
+                       '<div style="margin-top:6px;"></div>';
+        el.children[0].textContent = d.title || '';
+        el.children[1].innerHTML   = d.price || '';
+        el.children[2].textContent = d.excerpt || '';
+        if (d.url) {
+          const a = document.createElement('a');
+          a.href = d.url; a.target = '_blank'; a.rel = 'noopener';
+          a.textContent = 'View product →';
+          a.style.cssText = 'color:#2271b1;text-decoration:none;font-weight:500;';
+          el.children[3].appendChild(a);
+        }
+      } else if (card.type === 'order_status') {
+        const d = card.data || {};
+        el.innerHTML = '<div style="font-weight:600;margin-bottom:4px;">Order ' + (d.number || '') + '</div>' +
+                       '<div>Status: <strong></strong></div>' +
+                       '<div style="color:#50575e;">Total: ' + (d.total || '') + ' ' + (d.currency || '') + '</div>' +
+                       '<div style="color:#50575e;">Placed: ' + (d.placed_at || '') + '</div>';
+        el.querySelector('strong').textContent = d.status || '';
+      } else {
+        return;
+      }
+      messagesEl.appendChild(el);
+    });
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+  }
+
   async function sendMessage() {
     const text = input.value.trim();
     if (!text || !sessionId) return;
@@ -124,6 +161,9 @@
       const data = await res.json();
       if (data.content) {
         addMessage('assistant', data.content);
+      }
+      if (data.cards) {
+        renderCards(data.cards);
       }
     } catch (err) {
       addMessage('system', 'Failed to send. Please try again.');

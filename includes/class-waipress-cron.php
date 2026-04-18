@@ -379,18 +379,39 @@ class WAIpress_Cron {
 	private static function process_embedding_jobs() {
 		global $wpdb;
 
+		// Base list: blog content + pages. Add commerce post types when the
+		// respective plugin is active so the chatbot's product search tool
+		// has something to retrieve against.
+		$post_types = array( 'post', 'page' );
+		if ( class_exists( 'WooCommerce' ) ) {
+			$post_types[] = 'product';
+		}
+		if ( post_type_exists( 'sc_product' ) ) {
+			$post_types[] = 'sc_product';
+		}
+
+		/**
+		 * Filter: post types scanned for embeddings.
+		 *
+		 * @param string[] $post_types
+		 */
+		$post_types = apply_filters( 'waipress_embedding_post_types', $post_types );
+
+		$placeholders = implode( ',', array_fill( 0, count( $post_types ), '%s' ) );
+		$params       = array_merge( $post_types, array( 5 ) );
+
 		$posts = $wpdb->get_results( $wpdb->prepare(
-			"SELECT p.ID, p.post_title, p.post_content, p.post_type
+			"SELECT p.ID, p.post_title, p.post_content, p.post_excerpt, p.post_type
 			 FROM {$wpdb->posts} p
 			 LEFT JOIN {$wpdb->prefix}wai_embeddings e
 			   ON e.content_type = p.post_type AND e.content_id = p.ID
 			 WHERE p.post_status = 'publish'
-			   AND p.post_type IN ('post','page')
+			   AND p.post_type IN ($placeholders)
 			   AND e.id IS NULL
-			   AND p.post_content != ''
+			   AND ( p.post_content != '' OR p.post_excerpt != '' )
 			 ORDER BY p.post_date DESC
 			 LIMIT %d",
-			5
+			$params
 		) );
 
 		if ( empty( $posts ) ) {
@@ -408,9 +429,14 @@ class WAIpress_Cron {
 
 		foreach ( $posts as $post ) {
 			try {
-				// Strip HTML and chunk the text
-				$plain_text = wp_strip_all_tags( $post->post_content );
-				$plain_text = trim( $post->post_title . "\n\n" . $plain_text );
+				// Strip HTML and chunk the text. For products we also fold in
+				// excerpt (short description) because `post_content` alone
+				// often misses the most purchase-relevant copy.
+				$plain_text = trim(
+					$post->post_title
+					. "\n\n" . wp_strip_all_tags( (string) ( $post->post_excerpt ?? '' ) )
+					. "\n\n" . wp_strip_all_tags( (string) $post->post_content )
+				);
 
 				$chunks = self::chunk_text( $plain_text, 2000, 200 );
 

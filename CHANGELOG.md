@@ -5,6 +5,18 @@ All notable changes to WAIpress are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2026-04-18
+
+### Added
+- **Yoast SEO / Rank Math integration** (`includes/class-waipress-yoast.php`). Side meta-box on every edit screen with one-click AI rewrite for SEO title, meta description, focus keyword, and slug. Writes to `_yoast_wpseo_*` or `rank_math_*` meta keys depending on which plugin is active. New REST endpoint `POST /waipress/v1/ai/rewrite-meta`.
+- **WooCommerce product AI** (`includes/class-waipress-woocommerce.php`). Product-edit meta box with buttons to generate title, short description, long description, SEO title+meta (writes to the active SEO plugin), and product tags. New REST endpoint `POST /waipress/v1/ai/products/generate`.
+- **Chatbot ↔ WooCommerce + SureCart** (`includes/class-waipress-chatbot-tools.php`). Pre-generation commerce-tool layer that detects product-search and order-status intent via regex, looks up matches across WooCommerce and SureCart, injects a context snippet into the system prompt, and returns structured cards (`product_card`, `order_status`) that the widget renders inline. Works with any OpenAI-compatible provider — no native function-calling required.
+- **Form Bridge** (`includes/class-waipress-form-bridge.php`). Auto-captures submissions from WPForms, Gravity Forms, Contact Form 7, and Forminator — upserts a CRM contact (email-first, phone-fallback) and logs a `form_submission` activity. Fires the `waipress_form_submitted` action, which the Phase 4 automation engine will consume.
+- Widget now renders `product_card` and `order_status` cards returned by the chatbot (`assets/build/chatbot-widget.js`).
+
+### Changed
+- Embedding scanner (`class-waipress-cron.php::process_embedding_jobs`) now includes `product` (WooCommerce) and `sc_product` (SureCart) post types when those plugins are active, so the chatbot's RAG pipeline can retrieve from them. Post excerpts are now folded into the chunked text as well.
+
 ## [2.0.1] - 2026-04-18
 
 ### Fixed

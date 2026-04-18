@@ -4,7 +4,7 @@ Tags: ai, chatbot, crm, messaging, ecommerce
 Requires at least: 6.4
 Tested up to: 6.7
 Requires PHP: 8.0
-Stable tag: 2.0.1
+Stable tag: 2.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -124,6 +124,13 @@ Yes. The AI sidebar uses Server-Sent Events via `admin-ajax` for real-time strea
 
 == Changelog ==
 
+= 2.1.0 =
+* **Yoast SEO / Rank Math integration.** New "Rewrite meta with AI" meta box on every edit screen — regenerates SEO title, meta description, focus keyword, or slug with one click. Writes directly into the active SEO plugin's meta keys. No-op if neither Yoast nor Rank Math is installed.
+* **WooCommerce product AI.** Meta box on every WC product edit screen with buttons to generate title, short description, long description, SEO title+meta, and tags. Persists directly back into WooCommerce. No-op if WooCommerce isn't active.
+* **Chatbot ↔ WooCommerce + SureCart.** Chatbot now detects product-search and order-status intent, looks up matching products/orders, and injects results as structured cards in the reply (and as context for the model). Works across ANY OpenAI-compatible provider — no native function-calling required.
+* **Form bridge for WPForms / Gravity Forms / Contact Form 7 / Forminator.** Every submission from a supported form plugin auto-upserts a CRM contact and logs a `form_submission` activity on the timeline. Fires `waipress_form_submitted` for the upcoming automation engine.
+* Embedding scanner now indexes WooCommerce products (and SureCart products) when those plugins are active, so the chatbot's RAG pipeline can retrieve them.
+
 = 2.0.1 =
 * Chatbot now actually uses its configured knowledge sources — RAG retrieval wired into every turn (previously the `knowledge_sources` config was stored but never queried).
 * Fixed embeddings provider interface mismatch that caused every semantic search to silently fall back to LIKE text search.
@@ -143,6 +150,9 @@ Yes. The AI sidebar uses Server-Sent Events via `admin-ajax` for real-time strea
 * Initial release: AI content, messaging hub (WhatsApp/Telegram/Instagram/WebChat), CRM, chatbot, semantic search.
 
 == Upgrade Notice ==
+
+= 2.1.0 =
+Adds Yoast/Rank Math AI meta rewrite, WooCommerce product AI, chatbot integration with WooCommerce + SureCart, and a CRM bridge for WPForms/Gravity/CF7/Forminator. All integrations are opt-in — each one no-ops unless the third-party plugin is installed.
 
 = 2.0.1 =
 Important fix: chatbot knowledge sources are now actually used for RAG retrieval (previously silently ignored). Removes the legacy db.php drop-in — no action required on your side.

@@ -224,10 +224,14 @@ class WAIpress_Chatbot {
 		// Assemble system prompt; augment with RAG context if knowledge sources are configured.
 		$system_prompt = $session->system_prompt ?: 'You are a helpful customer support assistant.';
 		$rag_context   = self::build_rag_context( $content, $session->knowledge_sources );
+		$tool_result   = self::run_commerce_tools( $content, $session->knowledge_sources );
 
 		if ( $rag_context !== '' ) {
 			$system_prompt .= "\n\n### Context\n" . $rag_context
 				. "\n\nUse the context above to answer the user's question when relevant. If the context does not contain the answer, say you don't know rather than inventing details.";
+		}
+		if ( ! empty( $tool_result['context'] ) ) {
+			$system_prompt .= $tool_result['context'];
 		}
 
 		// Generate AI response
@@ -254,10 +258,28 @@ class WAIpress_Chatbot {
 			'model'       => $result['model'] ?? '',
 		) );
 
-		return rest_ensure_response( array(
+		$response = array(
 			'role'    => 'assistant',
 			'content' => $result['output'],
-		) );
+		);
+		if ( ! empty( $tool_result['cards'] ) ) {
+			$response['cards'] = $tool_result['cards'];
+		}
+
+		return rest_ensure_response( $response );
+	}
+
+	/**
+	 * Dispatch commerce-aware tools (product search, order lookup) based on
+	 * the chatbot config's knowledge_sources. Returns structured context/cards
+	 * or empty arrays when no commerce sources are enabled.
+	 */
+	private static function run_commerce_tools( $message, $knowledge_sources ) {
+		if ( ! class_exists( 'WAIpress_Chatbot_Tools' ) ) {
+			return array( 'context' => '', 'cards' => array() );
+		}
+		$sources = is_string( $knowledge_sources ) ? json_decode( $knowledge_sources, true ) : $knowledge_sources;
+		return WAIpress_Chatbot_Tools::run( $message, is_array( $sources ) ? $sources : array() );
 	}
 
 	public static function rest_get_history( $request ) {
