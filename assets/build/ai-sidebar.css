@@ -1,0 +1,15 @@
+/**
+ * WAIpress AI Sidebar Styles
+ */
+
+.waipress-ai-result {
+  background: #f0f0f1;
+  padding: 12px;
+  border-radius: 4px;
+  max-height: 300px;
+  overflow: auto;
+  font-size: 13px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  margin-bottom: 8px;
+}

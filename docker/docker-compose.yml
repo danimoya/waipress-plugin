@@ -1,0 +1,53 @@
+# WAIpress - Single Container Edition
+# WordPress + HeliosDB-Nano + AI (OpenAI-compat / Ollama)
+
+services:
+  waipress:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: waipress
+    hostname: waipress
+    restart: unless-stopped
+    environment:
+      # Database (embedded HeliosDB-Nano on localhost)
+      DB_HOST: 127.0.0.1
+      DB_PORT: "3306"
+      DB_NAME: waipress
+      DB_USER: waipress
+      DB_PASSWORD: waipress
+
+      # WordPress
+      WORDPRESS_DB_HOST: 127.0.0.1:3306
+      WORDPRESS_DB_NAME: waipress
+      WORDPRESS_DB_USER: waipress
+      WORDPRESS_DB_PASSWORD: waipress
+      WORDPRESS_TABLE_PREFIX: "wp_"
+      WORDPRESS_DEBUG: "false"
+
+      # AI Provider (configure in WP admin Settings, or via env)
+      # WAIPRESS_AI_PROVIDER: "openai"
+      # WAIPRESS_AI_BASE_URL: "https://api.openai.com"
+      # WAIPRESS_AI_API_KEY: ""
+      # WAIPRESS_AI_MODEL: "gpt-4o"
+
+      # Ollama (if using Ollama as provider)
+      # WAIPRESS_OLLAMA_URL: "http://host.docker.internal:11434"
+
+    volumes:
+      - waipress-data:/data
+      - waipress-uploads:/var/www/html/wp-content/uploads
+    ports:
+      - "80:80"
+    networks:
+      - management-network
+
+networks:
+  management-network:
+    external: true
+
+volumes:
+  waipress-data:
+    name: waipress-data
+  waipress-uploads:
+    name: waipress-uploads
