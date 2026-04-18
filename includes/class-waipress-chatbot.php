@@ -188,7 +188,7 @@ class WAIpress_Chatbot {
 
 		// Verify session exists and is active
 		$session = $wpdb->get_row( $wpdb->prepare(
-			"SELECT s.*, c.system_prompt, c.model, c.max_tokens, c.temperature
+			"SELECT s.*, c.system_prompt, c.model, c.max_tokens, c.temperature, c.knowledge_sources
 			 FROM {$wpdb->prefix}wai_chatbot_sessions s
 			 JOIN {$wpdb->prefix}wai_chatbot_configs c ON s.config_id = c.id
 			 WHERE s.id = %d AND s.status = 'active'",
@@ -221,10 +221,19 @@ class WAIpress_Chatbot {
 			);
 		}
 
+		// Assemble system prompt; augment with RAG context if knowledge sources are configured.
+		$system_prompt = $session->system_prompt ?: 'You are a helpful customer support assistant.';
+		$rag_context   = self::build_rag_context( $content, $session->knowledge_sources );
+
+		if ( $rag_context !== '' ) {
+			$system_prompt .= "\n\n### Context\n" . $rag_context
+				. "\n\nUse the context above to answer the user's question when relevant. If the context does not contain the answer, say you don't know rather than inventing details.";
+		}
+
 		// Generate AI response
 		$result = WAIpress_AI::generate_content(
 			$content,
-			$session->system_prompt ?: 'You are a helpful customer support assistant.',
+			$system_prompt,
 			$session->model,
 			$session->max_tokens
 		);
@@ -262,5 +271,83 @@ class WAIpress_Chatbot {
 		) );
 
 		return rest_ensure_response( $messages );
+	}
+
+	/**
+	 * Build a RAG context string for a chatbot turn.
+	 *
+	 * Reads the config's knowledge_sources JSON and queries the embeddings store
+	 * for relevant chunks. Returns an empty string if no sources are configured
+	 * or no matches are found. The returned text is ready to splice into the
+	 * system prompt under a "### Context" heading.
+	 *
+	 * Supports two knowledge_sources shapes:
+	 *   - Legacy:  ["post", "wai_knowledge"]
+	 *   - Phase 2: [{"type":"post_type","value":"post"}, {"type":"woocommerce_products"}]
+	 *
+	 * @param string       $query              The user's message.
+	 * @param string|array $knowledge_sources  JSON string from the config row, or already-decoded array.
+	 * @return string
+	 */
+	private static function build_rag_context( $query, $knowledge_sources ) {
+		if ( ! class_exists( 'WAIpress_Embeddings' ) ) {
+			return '';
+		}
+
+		$sources = is_string( $knowledge_sources ) ? json_decode( $knowledge_sources, true ) : $knowledge_sources;
+		if ( ! is_array( $sources ) || empty( $sources ) ) {
+			return '';
+		}
+
+		$content_types = array();
+		foreach ( $sources as $source ) {
+			if ( is_string( $source ) && $source !== '' ) {
+				$content_types[] = $source;
+			} elseif ( is_array( $source ) ) {
+				if ( isset( $source['value'] ) && is_string( $source['value'] ) ) {
+					$content_types[] = $source['value'];
+				} elseif ( isset( $source['type'] ) && is_string( $source['type'] ) ) {
+					$content_types[] = $source['type'];
+				}
+			}
+		}
+		$content_types = array_values( array_unique( array_filter( $content_types ) ) );
+
+		$top_k_per_source = 3;
+		$chunks           = array();
+
+		if ( empty( $content_types ) ) {
+			// Search across everything.
+			$chunks = (array) WAIpress_Embeddings::semantic_search( $query, 5, '' );
+		} else {
+			foreach ( $content_types as $type ) {
+				$results = (array) WAIpress_Embeddings::semantic_search( $query, $top_k_per_source, $type );
+				$chunks  = array_merge( $chunks, $results );
+			}
+		}
+
+		if ( empty( $chunks ) ) {
+			return '';
+		}
+
+		// De-duplicate, sort by score desc, keep top 5.
+		usort( $chunks, static function ( $a, $b ) {
+			$as = is_array( $a ) ? ( $a['score'] ?? 0 ) : ( $a->score ?? 0 );
+			$bs = is_array( $b ) ? ( $b['score'] ?? 0 ) : ( $b->score ?? 0 );
+			return $bs <=> $as;
+		} );
+		$chunks = array_slice( $chunks, 0, 5 );
+
+		$lines = array();
+		foreach ( $chunks as $chunk ) {
+			$meta = is_array( $chunk ) ? ( $chunk['metadata'] ?? array() ) : ( $chunk->metadata ?? array() );
+			$text = is_array( $meta ) ? ( $meta['text'] ?? '' ) : ( $meta->text ?? '' );
+			if ( $text === '' ) {
+				continue;
+			}
+			$lines[] = '- ' . trim( wp_strip_all_tags( (string) $text ) );
+		}
+
+		return implode( "\n", $lines );
 	}
 }

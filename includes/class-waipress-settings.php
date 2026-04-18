@@ -271,9 +271,16 @@ class WAIpress_Settings {
 			   value="<?php echo esc_attr( $value ); ?>" class="regular-text"
 			   placeholder="https://vectors.example.com" />
 		<p class="description">
-			<?php esc_html_e( 'Optional. Leave empty to use the built-in MySQL cosine similarity search (works everywhere, no extra service required).', 'waipress' ); ?>
+			<strong><?php esc_html_e( 'Optional.', 'waipress' ); ?></strong>
+			<?php esc_html_e( 'Leave empty to use the built-in MySQL cosine similarity search (works everywhere, no extra service required).', 'waipress' ); ?>
 			<br />
-			<?php esc_html_e( 'For large knowledge bases you can point this at any OpenAI-compatible vector endpoint — HeliosDB-Nano is a lightweight drop-in option that runs alongside your database.', 'waipress' ); ?>
+			<?php
+			printf(
+				/* translators: %s: HeliosDB-Nano link */
+				esc_html__( 'WAIpress is built by the team behind %s. For production knowledge bases with more than ~10k chunks we recommend it, but any OpenAI-compatible vector REST endpoint works here.', 'waipress' ),
+				'<a href="https://danielmoya.cv/heliosdb-nano" target="_blank" rel="noopener">HeliosDB-Nano</a>'
+			);
+			?>
 		</p>
 		<?php
 	}

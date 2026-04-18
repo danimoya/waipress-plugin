@@ -19,7 +19,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class WAIpress_Upsell {
 
-	const UPGRADE_URL = 'https://danielmoya.cv/waipress?utm_source=wp-plugin&utm_medium=admin&utm_campaign=upsell';
+	const UPGRADE_URL  = 'https://danielmoya.cv/waipress?utm_source=wp-plugin&utm_medium=admin&utm_campaign=upsell';
+	const HELIOSDB_URL = 'https://danielmoya.cv/heliosdb-nano?utm_source=wp-plugin&utm_medium=admin&utm_campaign=about';
 
 	/**
 	 * Hook into WordPress.
@@ -105,7 +106,7 @@ class WAIpress_Upsell {
 		<div class="wrap waipress-upgrade">
 			<h1><?php esc_html_e( 'Upgrade to WAIPress', 'waipress' ); ?></h1>
 			<p class="description" style="font-size:15px;max-width:780px;">
-				<?php esc_html_e( 'You already have the free WAIpress plugin — local, self-hosted, works with any OpenAI-compatible provider or Ollama. If you\'d rather skip the setup, or you need things that only make sense as a managed service, WAIPress is the hosted edition.', 'waipress' ); ?>
+				<?php esc_html_e( 'You already have the free WAIpress plugin — the self-hosted AI stack: content, chatbot, unified inbox, CRM, and commerce in one package. If you\'d rather skip the setup, need higher throughput, or want a managed HeliosDB-Nano vector database behind your knowledge base, WAIPress is the hosted edition from the same team.', 'waipress' ); ?>
 			</p>
 
 			<table class="widefat striped" style="max-width:900px;margin-top:1.5rem;">
@@ -121,11 +122,12 @@ class WAIpress_Upsell {
 					$rows = array(
 						array( __( 'AI content generation & streaming', 'waipress' ), true, true ),
 						array( __( 'Messaging Hub (WhatsApp, Telegram, Instagram, WebChat)', 'waipress' ), true, true ),
-						array( __( 'CRM, Chatbot, Commerce modules', 'waipress' ), true, true ),
+						array( __( 'CRM, Chatbot, Digital Store modules', 'waipress' ), true, true ),
 						array( __( 'Local MySQL cosine semantic search', 'waipress' ), true, true ),
 						array( __( 'Bring your own OpenAI / Ollama key', 'waipress' ), true, true ),
+						array( __( 'Self-host on any MySQL-compatible DB (incl. HeliosDB-Nano)', 'waipress' ), true, true ),
 						array( __( 'Managed AI — no API key to configure', 'waipress' ), false, true ),
-						array( __( 'Managed vector database (HeliosDB) for large KBs', 'waipress' ), false, true ),
+						array( __( 'Managed HeliosDB-Nano vector database for large KBs', 'waipress' ), false, true ),
 						array( __( 'Dedicated real-time WebSocket server', 'waipress' ), false, true ),
 						array( __( 'High-throughput image generation queue', 'waipress' ), false, true ),
 						array( __( 'Team workspace, RBAC, audit log', 'waipress' ), false, true ),
@@ -145,16 +147,20 @@ class WAIpress_Upsell {
 
 			<p style="margin-top:2rem;">
 				<a href="<?php echo esc_url( self::UPGRADE_URL ); ?>" target="_blank" rel="noopener" class="button button-primary button-hero">
-					<?php esc_html_e( 'Learn more at waipress.app', 'waipress' ); ?> &rarr;
+					<?php esc_html_e( 'Learn more about WAIPress', 'waipress' ); ?> &rarr;
+				</a>
+				<a href="<?php echo esc_url( self::HELIOSDB_URL ); ?>" target="_blank" rel="noopener" class="button button-secondary button-hero" style="margin-left:.5rem;">
+					<?php esc_html_e( 'About HeliosDB-Nano', 'waipress' ); ?>
 				</a>
 			</p>
 
 			<p class="description" style="margin-top:2rem;max-width:780px;">
 				<?php
 				printf(
-					/* translators: %s: link to the project site */
-					esc_html__( 'The free WAIpress plugin will always remain open source under the GPL. WAIPress is an optional hosted offering from the same team. Read more at %s.', 'waipress' ),
-					'<a href="' . esc_url( self::UPGRADE_URL ) . '" target="_blank" rel="noopener">danielmoya.cv/waipress</a>'
+					/* translators: 1: link to the WAIPress product site, 2: link to the HeliosDB-Nano project */
+					esc_html__( 'The free WAIpress plugin will always remain open source under the GPL. WAIPress is the hosted edition from the same team. WAIpress runs on any MySQL-compatible database; %2$s is our own MySQL-compatible engine, optimized for AI workloads, and a recommended (optional) accelerator for vector search. Read more at %1$s.', 'waipress' ),
+					'<a href="' . esc_url( self::UPGRADE_URL ) . '" target="_blank" rel="noopener">danielmoya.cv/waipress</a>',
+					'<a href="' . esc_url( self::HELIOSDB_URL ) . '" target="_blank" rel="noopener">HeliosDB-Nano</a>'
 				);
 				?>
 			</p>

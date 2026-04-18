@@ -1,12 +1,34 @@
 # WAIpress
 
-> AI-driven CMS, CRM, unified messaging hub, chatbot, and commerce platform for WordPress.
+> **The self-hosted AI stack for WordPress.** One plugin: content, chatbot, unified inbox (WhatsApp / Telegram / Instagram / WebChat), CRM, and commerce — all behind a single REST namespace.
 
 [![WordPress](https://img.shields.io/badge/WordPress-6.4%2B-blue.svg)](https://wordpress.org/)
 [![PHP](https://img.shields.io/badge/PHP-8.0%2B-777bb4.svg)](https://www.php.net/)
 [![License: GPL v2+](https://img.shields.io/badge/License-GPLv2%2B-yellow.svg)](https://www.gnu.org/licenses/gpl-2.0)
 
-WAIpress turns WordPress into an AI-native operations platform in a single plugin: content generation, omnichannel messaging, CRM, chatbot, and lightweight commerce — all exposed through one REST namespace (`waipress/v1`) and a suite of React admin apps.
+WAIpress turns WordPress into an AI-native operations platform. Content generation, omnichannel messaging, CRM, chatbot, and lightweight commerce — all exposed through one REST namespace (`waipress/v1`) and a suite of React admin apps. Bring your own OpenAI-compatible provider or run a local Ollama — your keys and data stay on your site.
+
+### Stack
+
+```
+┌───────────────────────────────────────────────────────────────┐
+│                    WordPress admin + frontend                 │
+│   (Gutenberg sidebar, chatbot widget, inbox SPA, storefront)  │
+└──────────────────────────┬────────────────────────────────────┘
+                           │   REST  waipress/v1  +  SSE
+┌──────────────────────────┴────────────────────────────────────┐
+│                         WAIpress plugin                       │
+│   AI Center • Chatbot • Messaging Hub • CRM • Digital Store   │
+└───────┬──────────────────┬─────────────────────┬──────────────┘
+        │                  │                     │
+  AI provider       Vector store (opt.)    Messaging APIs
+  ───────────       ──────────────────     ────────────────
+  OpenAI-compat    MySQL cosine (built-in) WhatsApp Cloud
+  Ollama local     or HeliosDB-Nano        Telegram Bot
+                   (recommended, optional) Instagram Graph
+```
+
+**Built by the team behind [HeliosDB-Nano](https://danielmoya.cv/heliosdb-nano).** WAIpress runs on any MySQL-compatible database; HeliosDB-Nano is a disclosed, optional accelerator for the vector-search pipeline when your knowledge base grows beyond the ~10k-chunk range that pure-MySQL cosine handles well.
 
 ---
 
@@ -35,12 +57,24 @@ WAIpress turns WordPress into an AI-native operations platform in a single plugi
 | **AI Images** | Background-queued image generation with attachment import. |
 | **Messaging Hub** | Unified inbox for WhatsApp Business, Telegram, Instagram DM, and on-site WebChat. Per-channel webhooks, agent replies, conversation assignment. |
 | **CRM** | Contacts, deals pipeline with configurable stages, activity timeline. |
-| **Chatbot** | Embeddable widget with streaming replies, knowledge-base grounding, live-session takeover. |
-| **Commerce** | Products (simple + variants), cart, checkout, orders, coupons. Standalone — does not require WooCommerce. |
-| **Semantic Search** | Embeddings store powering KB search and chatbot retrieval. |
+| **Chatbot** | Embeddable widget with streaming replies, RAG-grounded knowledge base, live-session takeover. |
+| **Digital Store** | Lightweight storefront for digital downloads / headless commerce. For physical products, use WooCommerce — WAIpress integrates with it. |
+| **Semantic Search** | Built-in MySQL cosine embedding search. Optional external vector endpoint for production scale. |
 | **Migration Tool** | Scan and import content from legacy sources. |
 
-**Provider-agnostic.** Bring your own OpenAI-compatible endpoint (OpenAI, Azure, Groq, Together, LocalAI, vLLM, LM Studio…) or run Ollama locally. No data is proxied through third-party services.
+### What makes WAIpress different from every other AI plugin
+
+| | AI Engine | FluentCRM | Chaty | **WAIpress** |
+| - | :-: | :-: | :-: | :-: |
+| AI content generation | ✅ | — | — | ✅ |
+| On-site chatbot | ✅ | — | — | ✅ |
+| **Chatbot over WhatsApp / Telegram / Instagram** | — | — | — | ✅ |
+| **Unified inbox with agent takeover** | — | — | — | ✅ |
+| Built-in CRM (contacts, deals, timeline) | — | ✅ | — | ✅ |
+| Semantic search + RAG | — | — | — | ✅ |
+| Free + GPL | ✅ | ✅ | ✅ | ✅ |
+
+**Provider-agnostic.** Bring your own OpenAI-compatible endpoint (OpenAI, Azure, Groq, Together, Fireworks, LocalAI, vLLM, LM Studio…) or run Ollama locally. No data is proxied through third-party services.
 
 ---
 

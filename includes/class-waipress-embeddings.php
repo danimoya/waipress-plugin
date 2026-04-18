@@ -160,6 +160,8 @@ class WAIpress_Embeddings {
 
 	/**
 	 * Generate an embedding for the query text via the configured AI provider.
+	 *
+	 * Matches the WAIpress_AI_Provider::generate_embeddings( string ): array contract.
 	 */
 	private static function embed_query( $query ) {
 		if ( ! class_exists( 'WAIpress_AI' ) ) {
@@ -168,11 +170,11 @@ class WAIpress_Embeddings {
 
 		try {
 			$provider = WAIpress_AI::get_provider();
-			if ( ! method_exists( $provider, 'embed' ) ) {
+			if ( ! $provider->supports_embeddings() ) {
 				return array();
 			}
-			$vectors = $provider->embed( array( $query ) );
-			return $vectors[0] ?? array();
+			$vector = $provider->generate_embeddings( $query );
+			return is_array( $vector ) ? $vector : array();
 		} catch ( \Throwable $e ) {
 			return array();
 		}
