@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class WAIpress_Schema {
 
-	const DB_VERSION = '1.0.0';
+	const DB_VERSION = '1.1.0';
 
 	/**
 	 * Create tables if they don't exist or need updating.
@@ -297,6 +297,42 @@ class WAIpress_Schema {
 			PRIMARY KEY (id),
 			KEY content_lookup (content_type, content_id),
 			KEY content_id (content_id)
+		) $charset_collate;";
+		dbDelta( $sql );
+
+		// ============================================================
+		// AI Form Builder
+		// ============================================================
+
+		$sql = "CREATE TABLE {$prefix}wai_forms (
+			id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+			name VARCHAR(255) NOT NULL DEFAULT '',
+			slug VARCHAR(100) NOT NULL DEFAULT '',
+			prompt TEXT DEFAULT NULL,
+			fields LONGTEXT NOT NULL,
+			settings LONGTEXT DEFAULT NULL,
+			status VARCHAR(20) NOT NULL DEFAULT 'draft',
+			created_by BIGINT(20) UNSIGNED DEFAULT NULL,
+			created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+			updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+			PRIMARY KEY (id),
+			UNIQUE KEY slug (slug),
+			KEY status (status)
+		) $charset_collate;";
+		dbDelta( $sql );
+
+		$sql = "CREATE TABLE {$prefix}wai_form_submissions (
+			id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+			form_id BIGINT(20) UNSIGNED NOT NULL,
+			contact_id BIGINT(20) UNSIGNED DEFAULT NULL,
+			data LONGTEXT NOT NULL,
+			ip VARCHAR(45) DEFAULT NULL,
+			user_agent VARCHAR(255) DEFAULT NULL,
+			created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+			PRIMARY KEY (id),
+			KEY form_id (form_id),
+			KEY contact_id (contact_id),
+			KEY created_at (created_at)
 		) $charset_collate;";
 		dbDelta( $sql );
 	}

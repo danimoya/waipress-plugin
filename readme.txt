@@ -4,7 +4,7 @@ Tags: ai, chatbot, crm, messaging, ecommerce
 Requires at least: 6.4
 Tested up to: 6.7
 Requires PHP: 8.0
-Stable tag: 2.1.0
+Stable tag: 2.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -124,6 +124,12 @@ Yes. The AI sidebar uses Server-Sent Events via `admin-ajax` for real-time strea
 
 == Changelog ==
 
+= 2.2.0 =
+* **AI Form builder.** Describe the form you need in plain English — WAIpress generates the fields, validates them, saves the form, and gives you a shortcode (`[waipress_form id="1"]`) or Gutenberg block to embed it. Submissions land in the CRM as contacts with a `form_submission` activity on the timeline.
+* New menu: **AI Center → AI Forms**.
+* New REST endpoints: `GET/POST /waipress/v1/forms`, `GET/PATCH /waipress/v1/forms/{id}`, `POST /waipress/v1/forms/generate`, `POST /waipress/v1/forms/{id}/submit`.
+* New tables: `wp_wai_forms`, `wp_wai_form_submissions` (cleaned up on uninstall).
+
 = 2.1.0 =
 * **Yoast SEO / Rank Math integration.** New "Rewrite meta with AI" meta box on every edit screen — regenerates SEO title, meta description, focus keyword, or slug with one click. Writes directly into the active SEO plugin's meta keys. No-op if neither Yoast nor Rank Math is installed.
 * **WooCommerce product AI.** Meta box on every WC product edit screen with buttons to generate title, short description, long description, SEO title+meta, and tags. Persists directly back into WooCommerce. No-op if WooCommerce isn't active.
@@ -150,6 +156,9 @@ Yes. The AI sidebar uses Server-Sent Events via `admin-ajax` for real-time strea
 * Initial release: AI content, messaging hub (WhatsApp/Telegram/Instagram/WebChat), CRM, chatbot, semantic search.
 
 == Upgrade Notice ==
+
+= 2.2.0 =
+New AI Form builder module. Adds two tables (`wai_forms`, `wai_form_submissions`) — no action required, they are created automatically on the next admin load.
 
 = 2.1.0 =
 Adds Yoast/Rank Math AI meta rewrite, WooCommerce product AI, chatbot integration with WooCommerce + SureCart, and a CRM bridge for WPForms/Gravity/CF7/Forminator. All integrations are opt-in — each one no-ops unless the third-party plugin is installed.

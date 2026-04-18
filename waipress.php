@@ -3,7 +3,7 @@
  * Plugin Name: WAIpress
  * Plugin URI:  https://danielmoya.cv/waipress
  * Description: The self-hosted AI stack for WordPress: content, chatbot, unified inbox (WhatsApp/Telegram/Instagram/WebChat), CRM, and digital store. Built by the team behind HeliosDB-Nano.
- * Version:     2.1.0
+ * Version:     2.2.0
  * Author:      Daniel Moya
  * Author URI:  https://danielmoya.cv
  * License:     GPL-2.0-or-later
@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /*  Constants                                                         */
 /* ------------------------------------------------------------------ */
 
-define( 'WAIPRESS_VERSION',    '2.1.0' );
+define( 'WAIPRESS_VERSION',    '2.2.0' );
 define( 'WAIPRESS_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'WAIPRESS_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
@@ -140,6 +140,7 @@ $waipress_includes = array(
 	'class-waipress-yoast.php',
 	'class-waipress-woocommerce.php',
 	'class-waipress-form-bridge.php',
+	'class-waipress-forms.php',
 	'class-waipress.php',
 );
 

@@ -221,6 +221,42 @@ class WAIpress_REST {
 			'permission_callback' => '__return_true',
 		) );
 
+		// AI Forms
+		register_rest_route( self::NAMESPACE, '/forms', array(
+			array(
+				'methods'             => 'GET',
+				'callback'            => array( 'WAIpress_Forms', 'rest_list' ),
+				'permission_callback' => array( __CLASS__, 'can_edit_posts' ),
+			),
+			array(
+				'methods'             => 'POST',
+				'callback'            => array( 'WAIpress_Forms', 'rest_create' ),
+				'permission_callback' => array( __CLASS__, 'can_edit_posts' ),
+			),
+		) );
+		register_rest_route( self::NAMESPACE, '/forms/(?P<id>\d+)', array(
+			array(
+				'methods'             => 'GET',
+				'callback'            => array( 'WAIpress_Forms', 'rest_get' ),
+				'permission_callback' => array( __CLASS__, 'can_edit_posts' ),
+			),
+			array(
+				'methods'             => 'PATCH',
+				'callback'            => array( 'WAIpress_Forms', 'rest_update' ),
+				'permission_callback' => array( __CLASS__, 'can_edit_posts' ),
+			),
+		) );
+		register_rest_route( self::NAMESPACE, '/forms/generate', array(
+			'methods'             => 'POST',
+			'callback'            => array( 'WAIpress_Forms', 'rest_generate' ),
+			'permission_callback' => array( __CLASS__, 'can_edit_posts' ),
+		) );
+		register_rest_route( self::NAMESPACE, '/forms/(?P<id>\d+)/submit', array(
+			'methods'             => 'POST',
+			'callback'            => array( 'WAIpress_Forms', 'rest_submit' ),
+			'permission_callback' => '__return_true',
+		) );
+
 		// Semantic Search
 		register_rest_route( self::NAMESPACE, '/search/semantic', array(
 			'methods'             => 'POST',

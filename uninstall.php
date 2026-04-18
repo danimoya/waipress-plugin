@@ -65,6 +65,8 @@ $wai_tables = array(
 	'wai_orders',
 	'wai_order_items',
 	'wai_coupons',
+	'wai_forms',
+	'wai_form_submissions',
 );
 
 foreach ( $wai_tables as $table ) {

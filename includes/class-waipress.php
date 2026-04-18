@@ -80,6 +80,11 @@ class WAIpress {
 		if ( class_exists( 'WAIpress_Form_Bridge' ) ) {
 			WAIpress_Form_Bridge::init();
 		}
+
+		// Native AI form builder.
+		if ( class_exists( 'WAIpress_Forms' ) ) {
+			WAIpress_Forms::init();
+		}
 	}
 
 	/**
@@ -157,6 +162,7 @@ class WAIpress {
 		);
 		add_submenu_page( 'waipress-ai', __( 'Generate Content', 'waipress' ), __( 'Generate Content', 'waipress' ), 'edit_posts', 'waipress-ai' );
 		add_submenu_page( 'waipress-ai', __( 'Prompt Templates', 'waipress' ), __( 'Prompt Templates', 'waipress' ), 'edit_posts', 'waipress-ai-prompts', array( __CLASS__, 'render_admin_page' ) );
+		// "AI Forms" submenu is registered by WAIpress_Forms so it can bind its own server-rendered callback.
 		add_submenu_page( 'waipress-ai', __( 'Generation Log', 'waipress' ), __( 'Generation Log', 'waipress' ), 'manage_options', 'waipress-ai-log', array( __CLASS__, 'render_admin_page' ) );
 
 		// Messaging Hub

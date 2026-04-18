@@ -5,6 +5,21 @@ All notable changes to WAIpress are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.0] - 2026-04-18
+
+### Added
+- **AI Form builder** (`includes/class-waipress-forms.php`). Generate forms from a natural-language prompt via the AI provider, render them via shortcode (`[waipress_form id="1"]`) or Gutenberg block (`waipress/form`), accept public submissions, and bridge every submission into the CRM as a contact + timeline activity.
+- New admin page: **AI Center → AI Forms** (server-rendered, no React bundle required).
+- New REST routes:
+  - `GET/POST /waipress/v1/forms`
+  - `GET/PATCH /waipress/v1/forms/{id}`
+  - `POST /waipress/v1/forms/generate`
+  - `POST /waipress/v1/forms/{id}/submit` (public, IP-rate-limited, honeypot-protected)
+- Schema version bump to `1.1.0`. New tables: `wai_forms`, `wai_form_submissions` (added to uninstall cleanup).
+
+### Changed
+- `wai_forms` submissions reuse the `WAIpress_Form_Bridge::ingest()` path so that third-party forms and native AI forms write identical contact/activity rows.
+
 ## [2.1.0] - 2026-04-18
 
 ### Added
