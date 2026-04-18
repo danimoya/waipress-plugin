@@ -72,10 +72,11 @@ Activate via **Plugins** in the WordPress admin.
 
 ### What activation does
 
-- Installs a small `wp-content/db.php` drop-in (only if none exists). Safely removed on deactivation/uninstall.
 - Creates the `wp_wai_*` custom tables via `dbDelta()`.
 - Seeds default deal stages and chatbot config.
 - Schedules the `waipress_process_jobs` cron event on a once-per-minute interval.
+
+WAIpress does **not** install any `db.php` drop-in. It uses only the standard `wpdb` layer, so it runs on any MySQL-compatible database.
 
 ---
 
@@ -94,6 +95,7 @@ All settings live at **AI Center → Settings**.
 | `waipress_ai_max_tokens` | Default `4096` |
 | `waipress_ai_embedding_model` | e.g. `text-embedding-3-small` |
 | `waipress_ai_image_model` | e.g. `gpt-image-1`, `dall-e-3` |
+| `waipress_vector_rest_url` | *Optional* external vector store URL. Empty = local MySQL cosine. |
 
 A **Test Connection** AJAX action validates credentials against the configured endpoint.
 
@@ -277,7 +279,6 @@ Deactivation is non-destructive — only the drop-in and cron event are removed.
 waipress/
 ├── waipress.php              # main plugin file + bootstrap
 ├── uninstall.php             # clean removal
-├── db-nano.php               # optional db.php drop-in
 ├── includes/
 │   ├── class-waipress.php              # bootstrap
 │   ├── class-waipress-ai*.php          # AI providers & service

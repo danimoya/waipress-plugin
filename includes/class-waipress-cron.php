@@ -457,8 +457,8 @@ class WAIpress_Cron {
 						array( '%s', '%d', '%d', '%s', '%s', '%s', '%s' )
 					);
 
-					// Best-effort upsert to HeliosDB vector store
-					self::upsert_heliosdb_vector( $post, $chunk_index, $chunk_text, $embedding );
+					// Best-effort upsert to the external vector store (if configured).
+					self::upsert_remote_vector( $post, $chunk_index, $chunk_text, $embedding );
 				}
 			} catch ( \Throwable $e ) {
 				error_log( sprintf(
@@ -471,7 +471,7 @@ class WAIpress_Cron {
 	}
 
 	/**
-	 * Upsert a chunk embedding to the HeliosDB vector store.
+	 * Upsert a chunk embedding to an external vector REST store, if configured.
 	 * Best effort -- failures are logged but do not stop processing.
 	 *
 	 * @param object $post        The WP post object.
@@ -479,16 +479,16 @@ class WAIpress_Cron {
 	 * @param string $chunk_text  The chunk text.
 	 * @param array  $embedding   The embedding vector.
 	 */
-	private static function upsert_heliosdb_vector( $post, int $chunk_index, string $chunk_text, array $embedding ) {
-		$helios_url = defined( 'WAIPRESS_HELIOS_REST_URL' ) ? WAIPRESS_HELIOS_REST_URL : get_option( 'waipress_helios_rest_url', '' );
+	private static function upsert_remote_vector( $post, int $chunk_index, string $chunk_text, array $embedding ) {
+		$vector_url = defined( 'WAIPRESS_VECTOR_REST_URL' ) ? WAIPRESS_VECTOR_REST_URL : get_option( 'waipress_vector_rest_url', '' );
 
-		if ( empty( $helios_url ) ) {
+		if ( empty( $vector_url ) ) {
 			return;
 		}
 
 		$vector_id = $post->post_type . '_' . $post->ID . '_' . $chunk_index;
 
-		$response = wp_remote_post( rtrim( $helios_url, '/' ) . '/v1/vectors/waipress_content/upsert', array(
+		$response = wp_remote_post( rtrim( $vector_url, '/' ) . '/v1/vectors/waipress_content/upsert', array(
 			'headers' => array( 'Content-Type' => 'application/json' ),
 			'body'    => wp_json_encode( array(
 				'vectors' => array(
@@ -510,7 +510,7 @@ class WAIpress_Cron {
 
 		if ( is_wp_error( $response ) ) {
 			error_log( sprintf(
-				'[WAIpress Cron] HeliosDB upsert failed for %s: %s',
+				'[WAIpress Cron] Vector store upsert failed for %s: %s',
 				$vector_id,
 				$response->get_error_message()
 			) );

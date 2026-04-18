@@ -60,6 +60,11 @@ class WAIpress {
 		if ( class_exists( 'WAIpress_Webhooks' ) ) {
 			WAIpress_Webhooks::init();
 		}
+
+		// Upgrade / upsell surfaces.
+		if ( class_exists( 'WAIpress_Upsell' ) ) {
+			WAIpress_Upsell::init();
+		}
 	}
 
 	/**

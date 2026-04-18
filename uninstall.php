@@ -73,20 +73,7 @@ foreach ( $wai_tables as $table ) {
 }
 
 /* ------------------------------------------------------------------ */
-/*  3. Remove wp-content/db.php if it belongs to WAIpress             */
-/* ------------------------------------------------------------------ */
-
-$dropin = WP_CONTENT_DIR . '/db.php';
-
-if ( file_exists( $dropin ) ) {
-	$header = file_get_contents( $dropin, false, null, 0, 512 );
-	if ( strpos( $header, 'WAIpress' ) !== false ) {
-		@unlink( $dropin );
-	}
-}
-
-/* ------------------------------------------------------------------ */
-/*  4. Remove any transients                                          */
+/*  3. Remove any transients (WAIpress-prefixed)                      */
 /* ------------------------------------------------------------------ */
 
 $wpdb->query(
@@ -96,7 +83,7 @@ $wpdb->query(
 );
 
 /* ------------------------------------------------------------------ */
-/*  5. Remove scheduled cron events                                   */
+/*  4. Remove scheduled cron events                                   */
 /* ------------------------------------------------------------------ */
 
 wp_clear_scheduled_hook( 'waipress_process_jobs' );

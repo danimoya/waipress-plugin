@@ -47,7 +47,8 @@ Separate models can be configured for chat, embeddings, and images.
 
 Because WAIpress is provider-agnostic, it only contacts external services you configure yourself:
 
-* The **Base URL** you enter on the Settings screen (AI chat, embeddings, images). No data is sent until you enter credentials and generate content.
+* The **AI Base URL** you enter on the Settings screen (chat, embeddings, images). No data is sent until you enter credentials and generate content.
+* The optional **Vector search endpoint** on the Settings screen — only if you explicitly set one. Leave empty to use the built-in MySQL cosine search (no external call).
 * **WhatsApp / Telegram / Instagram** webhooks — only if you add those channels. Inbound messages POST to your site; outbound replies go to the respective Graph or Bot API.
 * No telemetry, no analytics, no calls to the plugin author's servers.
 
@@ -63,12 +64,10 @@ Because WAIpress is provider-agnostic, it only contacts external services you co
 
 * WordPress 6.4 or newer
 * PHP 8.0 or newer
-* MySQL 5.7+ or MariaDB 10.3+
+* MySQL 5.7+ or MariaDB 10.3+ (or any MySQL-compatible database)
 * An OpenAI-compatible endpoint **or** a reachable Ollama server
 
-= About the db.php drop-in =
-
-On activation, WAIpress installs a small `wp-content/db.php` drop-in (`db-nano.php`) to enable efficient database access for background jobs. The drop-in is only installed if no other drop-in exists, and it is automatically removed on deactivation or uninstall. If you already use another drop-in (e.g. HyperDB, LudicrousDB, Query Monitor), WAIpress will not overwrite it.
+WAIpress uses only the standard WordPress database layer (`wpdb`) and does **not** install any `db.php` drop-in. It works on any MySQL-compatible database, including lightweight MySQL-compatible engines such as HeliosDB-Nano.
 
 == Frequently Asked Questions ==
 

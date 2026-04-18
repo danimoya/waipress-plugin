@@ -111,12 +111,12 @@ class WAIpress_Settings {
 		) );
 		add_settings_field( 'waipress_ai_embedding_model', __( 'Embedding Model', 'waipress' ), array( __CLASS__, 'field_embedding_model' ), 'waipress-settings', 'waipress_section_embeddings' );
 
-		register_setting( 'waipress-settings', 'waipress_helios_rest_url', array(
+		register_setting( 'waipress-settings', 'waipress_vector_rest_url', array(
 			'type'              => 'string',
-			'default'           => 'http://127.0.0.1:8080',
+			'default'           => '',
 			'sanitize_callback' => 'esc_url_raw',
 		) );
-		add_settings_field( 'waipress_helios_rest_url', __( 'HeliosDB REST URL', 'waipress' ), array( __CLASS__, 'field_helios_rest_url' ), 'waipress-settings', 'waipress_section_embeddings' );
+		add_settings_field( 'waipress_vector_rest_url', __( 'Vector search endpoint (optional)', 'waipress' ), array( __CLASS__, 'field_vector_rest_url' ), 'waipress-settings', 'waipress_section_embeddings' );
 
 		/* ----- Images section ------------------------------------- */
 
@@ -264,13 +264,17 @@ class WAIpress_Settings {
 		<?php
 	}
 
-	public static function field_helios_rest_url() {
-		$value = get_option( 'waipress_helios_rest_url', 'http://127.0.0.1:8080' );
+	public static function field_vector_rest_url() {
+		$value = get_option( 'waipress_vector_rest_url', '' );
 		?>
-		<input type="text" name="waipress_helios_rest_url" id="waipress_helios_rest_url"
+		<input type="text" name="waipress_vector_rest_url" id="waipress_vector_rest_url"
 			   value="<?php echo esc_attr( $value ); ?>" class="regular-text"
-			   placeholder="http://127.0.0.1:8080" />
-		<p class="description"><?php esc_html_e( 'HeliosDB REST endpoint for vector storage and similarity search.', 'waipress' ); ?></p>
+			   placeholder="https://vectors.example.com" />
+		<p class="description">
+			<?php esc_html_e( 'Optional. Leave empty to use the built-in MySQL cosine similarity search (works everywhere, no extra service required).', 'waipress' ); ?>
+			<br />
+			<?php esc_html_e( 'For large knowledge bases you can point this at any OpenAI-compatible vector endpoint — HeliosDB-Nano is a lightweight drop-in option that runs alongside your database.', 'waipress' ); ?>
+		</p>
 		<?php
 	}
 

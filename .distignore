@@ -1,0 +1,15 @@
+# Files excluded from the WordPress.org distribution.
+# Used by tools like 10up/action-wordpress-plugin-deploy.
+
+/.git
+/.github
+/.gitignore
+/.distignore
+/docker
+/node_modules
+/tests
+README.md
+CHANGELOG.md
+.DS_Store
+Thumbs.db
+*.log

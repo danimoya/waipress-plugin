@@ -14,8 +14,8 @@ COPY --from=heliosdb-nano:mysql /usr/local/bin/heliosdb-nano /usr/local/bin/heli
 # Copy WAIpress plugin
 COPY . /usr/src/wordpress/wp-content/plugins/waipress/
 
-# Copy db-nano.php drop-in to wp-content (activated by default in Docker)
-COPY db-nano.php /usr/src/wordpress/wp-content/db.php
+# HeliosDB-Nano is wire-compatible with MySQL, so the stock wpdb layer works
+# unmodified -- no db.php drop-in required.
 
 # System cron for reliable WP-Cron execution
 RUN echo '* * * * * www-data curl -sf http://localhost/wp-cron.php?doing_wp_cron > /dev/null 2>&1' \

@@ -5,6 +5,16 @@ All notable changes to WAIpress are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Removed
+- `db-nano.php` drop-in and the activation routine that installed it to `wp-content/db.php`. WAIpress now uses only the standard `wpdb` layer and works on any MySQL-compatible database.
+
+### Changed
+- Embeddings class rewritten around a local MySQL cosine-similarity search. An **optional** external vector REST endpoint can still be configured on the Settings screen; if empty, everything runs locally with no external calls.
+- `WAIPRESS_HELIOS_REST_URL` / `waipress_helios_rest_url` renamed to the vendor-neutral `WAIPRESS_VECTOR_REST_URL` / `waipress_vector_rest_url`. Default is now empty (local-only).
+- Docker image no longer copies a `db.php` drop-in.
+
 ## [2.0.0] - 2026-04-08
 
 ### Added

@@ -38,8 +38,8 @@ if ( ! defined( 'WAIPRESS_ANTHROPIC_API_KEY' ) ) {
 if ( ! defined( 'WAIPRESS_BANANA_API_KEY' ) ) {
 	define( 'WAIPRESS_BANANA_API_KEY', get_option( 'waipress_banana_api_key', '' ) );
 }
-if ( ! defined( 'WAIPRESS_HELIOS_REST_URL' ) ) {
-	define( 'WAIPRESS_HELIOS_REST_URL', get_option( 'waipress_helios_rest_url', 'http://127.0.0.1:8080' ) );
+if ( ! defined( 'WAIPRESS_VECTOR_REST_URL' ) ) {
+	define( 'WAIPRESS_VECTOR_REST_URL', get_option( 'waipress_vector_rest_url', '' ) );
 }
 if ( ! defined( 'WAIPRESS_WEBHOOK_SECRET' ) ) {
 	define( 'WAIPRESS_WEBHOOK_SECRET', get_option( 'waipress_webhook_secret', '' ) );
@@ -79,20 +79,9 @@ register_activation_hook( __FILE__, 'waipress_activate' );
 register_deactivation_hook( __FILE__, 'waipress_deactivate' );
 
 /**
- * Plugin activation: install db.php drop-in, create schema, schedule cron.
+ * Plugin activation: create schema, schedule cron.
  */
 function waipress_activate() {
-
-	/* --- Copy db-nano.php drop-in ---------------------------------- */
-	$source      = WAIPRESS_PLUGIN_DIR . 'db-nano.php';
-	$destination = WP_CONTENT_DIR . '/db.php';
-
-	if ( file_exists( $source ) ) {
-		// Only overwrite if the target does not exist or is already ours.
-		if ( ! file_exists( $destination ) || waipress_is_our_dropin( $destination ) ) {
-			@copy( $source, $destination );
-		}
-	}
 
 	/* --- Create custom tables ------------------------------------- */
 	require_once WAIPRESS_PLUGIN_DIR . 'includes/waipress-schema.php';
@@ -110,15 +99,9 @@ function waipress_activate() {
 }
 
 /**
- * Plugin deactivation: remove db.php drop-in (if ours), clear cron.
+ * Plugin deactivation: clear cron.
  */
 function waipress_deactivate() {
-
-	/* --- Remove db.php if it belongs to WAIpress ------------------ */
-	$dropin = WP_CONTENT_DIR . '/db.php';
-	if ( file_exists( $dropin ) && waipress_is_our_dropin( $dropin ) ) {
-		@unlink( $dropin );
-	}
 
 	/* --- Clear scheduled events ----------------------------------- */
 	$timestamp = wp_next_scheduled( 'waipress_process_jobs' );
@@ -128,20 +111,6 @@ function waipress_deactivate() {
 	wp_clear_scheduled_hook( 'waipress_process_jobs' );
 
 	flush_rewrite_rules();
-}
-
-/**
- * Check whether a db.php file was placed by WAIpress.
- *
- * @param string $path Full path to db.php.
- * @return bool
- */
-function waipress_is_our_dropin( $path ) {
-	if ( ! is_readable( $path ) ) {
-		return false;
-	}
-	$header = file_get_contents( $path, false, null, 0, 512 );
-	return ( strpos( $header, 'WAIpress' ) !== false );
 }
 
 /* ------------------------------------------------------------------ */
@@ -166,6 +135,7 @@ $waipress_includes = array(
 	'class-waipress-webhooks.php',
 	'class-waipress-sse.php',
 	'class-waipress-settings.php',
+	'class-waipress-upsell.php',
 	'class-waipress.php',
 );
 
