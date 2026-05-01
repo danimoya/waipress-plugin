@@ -19,8 +19,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class WAIpress_Upsell {
 
-	const UPGRADE_URL  = 'https://danielmoya.cv/waipress?utm_source=wp-plugin&utm_medium=admin&utm_campaign=upsell';
-	const HELIOSDB_URL = 'https://danielmoya.cv/heliosdb-nano?utm_source=wp-plugin&utm_medium=admin&utm_campaign=about';
+	const UPGRADE_URL  = 'https://danimoya.com/waipress?utm_source=wp-plugin&utm_medium=admin&utm_campaign=upsell';
+	const HELIOSDB_URL = 'https://github.com/dimensigon/HDB-HeliosDB-Nano/';
 
 	/**
 	 * Hook into WordPress.
@@ -159,7 +159,7 @@ class WAIpress_Upsell {
 				printf(
 					/* translators: 1: link to the WAIPress product site, 2: link to the HeliosDB-Nano project */
 					esc_html__( 'The free WAIpress plugin will always remain open source under the GPL. WAIPress is the hosted edition from the same team. WAIpress runs on any MySQL-compatible database; %2$s is our own MySQL-compatible engine, optimized for AI workloads, and a recommended (optional) accelerator for vector search. Read more at %1$s.', 'waipress' ),
-					'<a href="' . esc_url( self::UPGRADE_URL ) . '" target="_blank" rel="noopener">danielmoya.cv/waipress</a>',
+					'<a href="' . esc_url( self::UPGRADE_URL ) . '" target="_blank" rel="noopener">danimoya.com/waipress</a>',
 					'<a href="' . esc_url( self::HELIOSDB_URL ) . '" target="_blank" rel="noopener">HeliosDB-Nano</a>'
 				);
 				?>

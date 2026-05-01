@@ -1,11 +1,11 @@
 <?php
 /**
  * Plugin Name: WAIpress
- * Plugin URI:  https://danielmoya.cv/waipress
+ * Plugin URI:  https://danimoya.com/waipress
  * Description: The self-hosted AI stack for WordPress: content, chatbot, unified inbox (WhatsApp/Telegram/Instagram/WebChat), CRM, and digital store. Built by the team behind HeliosDB-Nano.
- * Version:     2.2.0
+ * Version:     2.5.0
  * Author:      Daniel Moya
- * Author URI:  https://danielmoya.cv
+ * Author URI:  https://danimoya.com
  * License:     GPL-2.0-or-later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: waipress
@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /*  Constants                                                         */
 /* ------------------------------------------------------------------ */
 
-define( 'WAIPRESS_VERSION',    '2.2.0' );
+define( 'WAIPRESS_VERSION',    '2.5.0' );
 define( 'WAIPRESS_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'WAIPRESS_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
@@ -141,6 +141,12 @@ $waipress_includes = array(
 	'class-waipress-woocommerce.php',
 	'class-waipress-form-bridge.php',
 	'class-waipress-forms.php',
+	'class-waipress-email.php',
+	'class-waipress-automations.php',
+	'class-waipress-crypto.php',
+	'class-waipress-outbound.php',
+	'class-waipress-channels-wizard.php',
+	'class-waipress-digital-store.php',
 	'class-waipress.php',
 );
 
